@@ -8,12 +8,13 @@ resource "aws_vpc" "jenkins_vpc" {
 
 
 resource "aws_instance" "jenkins_ec2instance" {
-  ami               = "ami-041d6256ed0f2061c"
+  ami               = data.aws_ami.amzlinux2.id
   instance_type     = var.instance_type
   availability_zone = "ap-south-1a"
 #  count             = 1 
-#  user_data         = file("${path.module}/install_jenkins.sh")
-#  key_pair         = "general"
+  user_data         = file("${path.module}/install_jenkins.sh")
+  key_name          = var.instance_keypair 
+  vpc_security_group_ids = [ aws_security_group.vpc-ssh.id, aws_security_group.vpc-web.id ]
 
   tags = {
     "Name" = "JenkinsHA01"
